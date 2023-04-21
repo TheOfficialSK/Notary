@@ -174,7 +174,6 @@
       function createSidebar() {
          const sidebar = document.createElement('div');
          sidebar.id = 'cardsSidebar';
-         sidebar.classList.add('expanded');
 
          const header = document.createElement('div');
          header.id = 'notaryHeader';
@@ -200,6 +199,7 @@
          const button = document.createElement('button');
          button.id = 'addCardButton';
          button.innerText = 'Add to Cards';
+        button.style.left = '-150px';
          button.addEventListener('click', () => {
             const selectedText = window.getSelection().toString().trim();
             const currentUrl = window.location.href;
@@ -221,6 +221,7 @@
          const button = document.createElement('button');
          button.id = 'removeCardButton';
          button.innerText = 'Remove Card';
+        button.style.left = '-150px';
          button.addEventListener('click', () => {
             const selectedCard = document.querySelector('.card.selected');
             if (selectedCard) {
@@ -241,6 +242,7 @@
          const button = document.createElement('button');
          button.id = 'removeAllButton';
          button.innerText = 'Remove All';
+        button.style.left = '-150px';
          button.addEventListener('click', () => {
             const cardsContainer = document.getElementById('cardsContainer');
             cardsContainer.innerHTML = '';
@@ -253,7 +255,7 @@
       function createToggleSidebarButton() {
          const button = document.createElement('button');
          button.id = 'toggleSidebarButton';
-         button.innerText = '<';
+         button.innerText = '>';
          button.addEventListener('click', () => {
             const sidebar = document.getElementById('cardsSidebar');
             sidebar.classList.toggle('expanded');
