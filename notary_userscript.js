@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Notary Experimental
+// @name         Notary
 // @description  Save highlighted text to cards in a sidebar
 // @version      1.1
 // @author       Salman Khattak
@@ -185,7 +185,6 @@
             height: 50px;
           box-shadow: 0 5px 10px rgba(0, 0, 0, 0.357);
         }
-
         #notaryFooter {
             display: flex;
             justify-content: space-around;
@@ -229,6 +228,7 @@
          document.body.appendChild(sidebar);
       }
 
+      // This function creates the add card button which is used to clip text from a page.
       function createAddCardButton() {
       const button = document.createElement('button');
       button.id = 'addCardButton';
@@ -251,6 +251,7 @@
       document.body.appendChild(button);
    }
 
+      // This function creates the remove card button which is used to remove a card from the sidebar.
       function createRemoveCardButton() {
          const button = document.createElement('button');
          button.id = 'removeCardButton';
@@ -272,6 +273,7 @@
          document.body.appendChild(button);
       }
 
+      // This function creates the remove all button which is used to remove all cards from the sidebar.
       function createRemoveAllButton() {
          const button = document.createElement('button');
          button.id = 'removeAllButton';
@@ -286,6 +288,8 @@
          document.body.appendChild(button);
       }
 
+
+      // This function creates the toggle sidebar button which is used to expand and collapse the sidebar.
       function createToggleSidebarButton() {
          const button = document.createElement('button');
          button.id = 'toggleSidebarButton';
@@ -314,6 +318,7 @@
          document.body.appendChild(button);
       }
 
+      // This function handles the logic behind creating a card and adding it to the sidebar.
       function addCard(text, url, siteTitle) {
          const card = document.createElement('div');
          card.classList.add('notaryCard');
@@ -346,6 +351,7 @@
          cardsContainer.appendChild(card);
       }
 
+      // This function  handles the logic to load all the cards from local storage and adds them to the sidebar.
       function loadCards() {
          const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
          savedCards.forEach(cardData => {
@@ -353,23 +359,27 @@
          });
       }
 
+      // This function checks if a card already exists in local storage, this is used to prevent duplicate cards.
       function cardExists(text, url, siteTitle) {
          const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
          return savedCards.some(card => card.text === text && card.url === url && card.siteTitle === siteTitle);
       }
 
+      // This function handles the logic to remove a card from local storage.
       function removeCardFromStorage(text, url, siteTitle) {
          const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
          const updatedCards = savedCards.filter(card => !(card.text === text && card.url === url && card.siteTitle === siteTitle));
          localStorage.setItem('savedCards', JSON.stringify(updatedCards));
       }
+
      let buttonTimeout; // Declare a variable for the timer outside the function
 
-function handleMouseUp(event) {
-    const selectedText = window.getSelection().toString().trim();
-    const addCardButton = document.getElementById('addCardButton');
+   // This function handles the logic to show the add card button when text is highlighted on the page.
+   function handleMouseUp(event) {
+      const selectedText = window.getSelection().toString().trim();
+      const addCardButton = document.getElementById('addCardButton');
 
-    if (selectedText) {
+      if (selectedText) {
         addCardButton.style.display = 'block';
         addCardButton.style.left = `${event.clientX}px`;
         addCardButton.style.top = `${event.clientY}px`;
@@ -379,12 +389,13 @@ function handleMouseUp(event) {
         clearTimeout(buttonTimeout); // Clear the previous timer if it exists
         buttonTimeout = setTimeout(() => {
             addCardButton.style.display = 'none';
-        }, 5000);
-    } else {
+      }, 5000);
+      } else {
         addCardButton.style.display = 'none';
-    }
-}
+      }
+   }
 
+   // These are constructor calls which create the sidebar, add card button, remove card button, remove all button, and toggle sidebar button, and the load cards function.
    createSidebar();
    createAddCardButton();
    createRemoveCardButton();
@@ -392,25 +403,28 @@ function handleMouseUp(event) {
    createToggleSidebarButton();
    loadCards();
 
-      const currentUrl = window.location.href;
+   // These are variables which are used to store the current url and the title of the page.
+   const currentUrl = window.location.href;
    const siteTitle = document.title || currentUrl;
 
+   // This event listener is used to handle the logic to show the add card button when text is highlighted on the page.
    document.addEventListener('mouseup', handleMouseUp);
 
+   // This event listener is used to handle the logic to add a card to the sidebar when the add card button is clicked.
    document.getElementById('addCardButton').addEventListener('click', () => {
-   const selectedText = window.getSelection().toString().trim();
-   if (selectedText && !cardExists(selectedText, currentUrl, siteTitle)) {
-      addCard(selectedText, currentUrl, siteTitle);
+      const selectedText = window.getSelection().toString().trim();
+      if (selectedText && !cardExists(selectedText, currentUrl, siteTitle)) {
+         addCard(selectedText, currentUrl, siteTitle);
 
-      const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
-      savedCards.push({ text: selectedText, url: currentUrl, siteTitle });
-      localStorage.setItem('savedCards', JSON.stringify(savedCards));
-   }
-   // Clear the selection and hide the button after clicking the button
-   window.getSelection().removeAllRanges();
-   clearTimeout(buttonTimeout); // Cancel the timer
-   addCardButton.style.display = 'none';
-});
-})();
-
+         const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
+         savedCards.push({ text: selectedText, url: currentUrl, siteTitle });
+         localStorage.setItem('savedCards', JSON.stringify(savedCards));
+      }
+      
+      // Clear the selection and hide the button after clicking the button
+      window.getSelection().removeAllRanges();
+      clearTimeout(buttonTimeout); // Cancel the timer
+      addCardButton.style.display = 'none';
+   });
+   })();
 })();
