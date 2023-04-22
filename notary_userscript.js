@@ -9,45 +9,6 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
-
-// Sites this userscript should run on: theoretically all sites, sites that I have done testing on and have worked are listed below
-// https://www.google.com/
-// https://www.cnn.com/
-// https://www.youtube.com/
-// https://www.reddit.com/
-// 
-// My scripts behavior is to allow the user to highlight any text from their given web domain, and add it to a card that appears in a scrollable window on the left of their
-// browser. The cards the user saves are accessable from ANYWHERE within the SAME domain, meaning that if a user decides to clip some text from a specific youtube description, 
-// and then proceeds to move to a different video or the youtube homepage, they can still access the card they saved from the sidebar.
-// However, one shortcoming of this is that if a user decides to clip some text from a specific youtube description, and then proceeds to move to a different domain, 
-// they will not be able to access the card they saved from the sidebar. This is because the cards are stored in the users local storage, and are only accessable from the same domain.
-// 
-// The only fix to this issue would be to buy a domain and host a server for the user to access the cards from, but that would be a lot of work.
-// 
-// overall, this userscript is a nice, user-friendly way to save text from a given domain, and access it from anywhere within the same domain. Some use case examples would be:
-// - saving a google search result to a card, and then accessing it from the google homepage
-// - performing research on a topic, and saving the text from the research to a card, and then accessing it from the homepage of the website you are researching on.
-// - compiling a list of videos to watch later on youtube, without getting your algorithm messed up by actually saving them to watch later.
-//
-// To create the Notary Experimental userscript, I relied on several topics from HTML, CSS, JavaScript, and the browser's devtools. These topics include:
-
-// 1. DOM Manipulation (JavaScript):
-//    This topic covers selecting, modifying, and creating elements within the HTML document.
-//    It was necessary to access and manipulate the content that needed to be saved as cards in the sidebar.
-
-// 2. Event Listeners (JavaScript):
-//    Event listeners are used to handle user interactions, such as clicks and mouseup events, with the web page.
-//    In this case, I used event listeners to detect when the user selected text or clicked on buttons.
-
-// 3. CSS Styling (CSS):
-//    I needed to apply appropriate styling to the sidebar, cards, and buttons for an appealing user interface.
-
-// 4. Local Storage (JavaScript and Devtools):
-//    The userscript stores and retrieves saved cards using the browser's local storage feature.
-//    This allows users to save their cards persistently across sessions.
-//    The Devtools' Application panel can be used to inspect and modify the local storage data.
-
-
 (function () {
    'use strict';
 
