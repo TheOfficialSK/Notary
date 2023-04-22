@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Notary
+// @name         Notary Experimental
 // @description  Save highlighted text to cards in a sidebar
-// @version      1.0
+// @version      1.1
 // @author       Salman Khattak
 // @match        *://*/*
 // @grant        GM_addStyle
@@ -60,7 +60,7 @@
             bottom: 60px;
             width: 100%;
         }
-        .card {
+        .notaryCard {
             background-color: var(--notary-card-bg);
             border: 1px solid var(--notary-border-color);
             border-radius: 4px;
@@ -72,7 +72,7 @@
             cursor: pointer;
             color: black;
         }
-        .card.selected {
+        .notaryCard.selected {
             background-color: var(--notary-card-selected-bg);
         }
         #addCardButton, #removeCardButton, #toggleSidebarButton, #removeAllButton {
@@ -85,12 +85,6 @@
             cursor: pointer;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
-        #addCardButton {
-            left: 5px;
-        }
-        #removeCardButton {
-            left: 125px;
-        }
         #addCardButton, #removeCardButton {
             position: fixed;
             bottom: 10px;
@@ -102,7 +96,7 @@
             height: 39px;
             position: fixed;
             top: 0px;
-            left: 170px;
+            left: 10px;
             z-index: 10000001;
             transition: left 0.3s ease-in-out;
         }
@@ -166,6 +160,7 @@
             height: 60px;
           box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.357);
         }
+        
     `);
 
    (function () {
@@ -196,26 +191,26 @@
       }
 
       function createAddCardButton() {
-         const button = document.createElement('button');
-         button.id = 'addCardButton';
-         button.innerText = 'Add to Cards';
-        button.style.left = '-150px';
-         button.addEventListener('click', () => {
-            const selectedText = window.getSelection().toString().trim();
-            const currentUrl = window.location.href;
-            const siteTitle = document.title || currentUrl;
+      const button = document.createElement('button');
+      button.id = 'addCardButton';
+      button.innerText = 'Add to Cards';
+      button.style.display = 'none'; // Hide button initially
+      button.addEventListener('click', () => {
+         const selectedText = window.getSelection().toString().trim();
+         const currentUrl = window.location.href;
+         const siteTitle = document.title || currentUrl;
 
-            if (selectedText && !cardExists(selectedText, currentUrl, siteTitle)) {
-               addCard(selectedText, currentUrl, siteTitle);
+         if (selectedText && !cardExists(selectedText, currentUrl, siteTitle)) {
+            addCard(selectedText, currentUrl, siteTitle);
 
-               const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
-               savedCards.push({ text: selectedText, url: currentUrl, siteTitle });
-               localStorage.setItem('savedCards', JSON.stringify(savedCards));
-            }
-         });
+            const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
+            savedCards.push({ text: selectedText, url: currentUrl, siteTitle });
+            localStorage.setItem('savedCards', JSON.stringify(savedCards));
+         }
+      });
 
-         document.body.appendChild(button);
-      }
+      document.body.appendChild(button);
+   }
 
       function createRemoveCardButton() {
          const button = document.createElement('button');
@@ -223,7 +218,7 @@
          button.innerText = 'Remove Card';
         button.style.left = '-150px';
          button.addEventListener('click', () => {
-            const selectedCard = document.querySelector('.card.selected');
+            const selectedCard = document.querySelector('.notaryCard.selected');
             if (selectedCard) {
                const cardText = selectedCard.querySelector('div').innerText;
                const cardLink = selectedCard.querySelector('a');
@@ -267,7 +262,7 @@
             if (sidebar.classList.contains('expanded')) {
                button.innerText = '<';
                addCardButton.style.left = '5px';
-               removeCardButton.style.left = '125px';
+               removeCardButton.style.left = '10px';
                removeAllButton.style.left = '170px';
             } else {
                button.innerText = '>';
@@ -282,7 +277,7 @@
 
       function addCard(text, url, siteTitle) {
          const card = document.createElement('div');
-         card.classList.add('card');
+         card.classList.add('notaryCard');
 
          const link = document.createElement('a');
          link.href = url;
@@ -329,27 +324,54 @@
          const updatedCards = savedCards.filter(card => !(card.text === text && card.url === url && card.siteTitle === siteTitle));
          localStorage.setItem('savedCards', JSON.stringify(updatedCards));
       }
+     let buttonTimeout; // Declare a variable for the timer outside the function
 
-      createSidebar();
-      createAddCardButton();
-      createRemoveCardButton();
-      createRemoveAllButton();
-      createToggleSidebarButton();
-      loadCards();
+function handleMouseUp(event) {
+    const selectedText = window.getSelection().toString().trim();
+    const addCardButton = document.getElementById('addCardButton');
+
+    if (selectedText) {
+        addCardButton.style.display = 'block';
+        addCardButton.style.left = `${event.clientX}px`;
+        addCardButton.style.top = `${event.clientY}px`;
+        addCardButton.style.padding = '5px 10px';
+        addCardButton.style.bottom = 'unset';
+
+        clearTimeout(buttonTimeout); // Clear the previous timer if it exists
+        buttonTimeout = setTimeout(() => {
+            addCardButton.style.display = 'none';
+        }, 5000);
+    } else {
+        addCardButton.style.display = 'none';
+    }
+}
+
+   createSidebar();
+   createAddCardButton();
+   createRemoveCardButton();
+   createRemoveAllButton();
+   createToggleSidebarButton();
+   loadCards();
 
       const currentUrl = window.location.href;
-      const siteTitle = document.title || currentUrl;
+   const siteTitle = document.title || currentUrl;
 
-      document.getElementById('addCardButton').addEventListener('click', () => {
-         const selectedText = window.getSelection().toString().trim();
-         if (selectedText && !cardExists(selectedText, currentUrl, siteTitle)) {
-            addCard(selectedText, currentUrl, siteTitle);
+   document.addEventListener('mouseup', handleMouseUp);
 
-            const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
-            savedCards.push({ text: selectedText, url: currentUrl, siteTitle });
-            localStorage.setItem('savedCards', JSON.stringify(savedCards));
-         }
-      });
-   })();
+   document.getElementById('addCardButton').addEventListener('click', () => {
+   const selectedText = window.getSelection().toString().trim();
+   if (selectedText && !cardExists(selectedText, currentUrl, siteTitle)) {
+      addCard(selectedText, currentUrl, siteTitle);
+
+      const savedCards = JSON.parse(localStorage.getItem('savedCards')) || [];
+      savedCards.push({ text: selectedText, url: currentUrl, siteTitle });
+      localStorage.setItem('savedCards', JSON.stringify(savedCards));
+   }
+   // Clear the selection and hide the button after clicking the button
+   window.getSelection().removeAllRanges();
+   clearTimeout(buttonTimeout); // Cancel the timer
+   addCardButton.style.display = 'none';
+});
+})();
 
 })();
