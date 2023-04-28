@@ -1,5 +1,11 @@
 # Notary UserScript
 
+# Available as a Chrome-based browser extension:
+
+https://chrome.google.com/webstore/detail/notary/kbkdgalfpmgbhnjbbnehmefmlhkpmmai
+
+
+
 Notary is a lightweight UserScript that allows you to save highlighted text from any website to organized cards in a sidebar. Easily manage your saved snippets and keep track of interesting quotes, facts, or anything else you want to remember.
 
 ## Features
