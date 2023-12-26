@@ -159,7 +159,6 @@
             height: 60px;
           box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.357);
         }
-        
     `);
 
    (function () {
